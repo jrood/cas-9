@@ -1,5 +1,5 @@
 {
-  "name": "cas9",
+  "name": "cas-9",
   "version": "0.0.0",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
