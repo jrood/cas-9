@@ -10,6 +10,10 @@
   },
   "author": "John Rood",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrood/cas-9"
+  },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "happy-dom": "^17.4.4",
