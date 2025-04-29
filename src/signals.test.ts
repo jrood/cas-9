@@ -2,94 +2,90 @@ import { expect, test } from 'vitest';
 import { signal, computed, effect } from './signals';
 
 test('diamond problem', async () => {
-  /*       avg
-   *      ↗   ↖
-   *  count   total
-   *      ↖   ↗
-   *     numbers
+  /*       d
+   *     ↗   ↖
+   *   b       c
+   *     ↖   ↗
+   *       a
    */
 
-  const numbers = signal([1, 2]);
+  const [a, setA] = signal(Symbol());
 
-  let countRuns = 0;
-  const count = computed(() => {
-    countRuns++;
-    return numbers().length;
+  let bRuns = 0;
+  const b = computed(() => {
+    bRuns++;
+    return a();
   });
 
-  let totalRuns = 0;
-  const total = computed(() => {
-    totalRuns++;
-    return numbers().reduce((_total, n) => (_total += n), 0);
+  let cRuns = 0;
+  const c = computed(() => {
+    cRuns++;
+    return a();
   });
 
-  expect(countRuns).toBe(0);
-  expect(totalRuns).toBe(0);
+  expect(bRuns).toBe(0);
+  expect(cRuns).toBe(0);
 
-  let avg = 0;
-  let effectRuns = 0;
+  let dRuns = 0;
   effect(() => {
-    effectRuns++;
-    avg = total() / count();
+    dRuns++;
+    b();
+    c();
   });
 
-  expect(countRuns).toBe(1);
-  expect(totalRuns).toBe(1);
-  expect(effectRuns).toBe(1);
-  expect(avg).toBe(1.5);
+  expect(bRuns).toBe(1);
+  expect(cRuns).toBe(1);
+  expect(dRuns).toBe(1);
 
-  numbers([1, 2, 3]);
+  setA(Symbol());
 
-  expect(countRuns).toBe(2);
-  expect(totalRuns).toBe(2);
-  expect(effectRuns).toBe(2);
-  expect(avg).toBe(2);
+  expect(bRuns).toBe(2);
+  expect(cRuns).toBe(2);
+  expect(dRuns).toBe(2);
 });
 
 test('flag problem', async () => {
-  /* count & avg
-   *    ↑ ↖
-   *    ↑  total
-   *    ↑ ↗
-   * numbers
+  /*   c
+   *     ↖
+   *   ↑   b
+   *     ↗
+   *   a
    */
 
-  const numbers = signal([1, 2]);
+  const [a, setA] = signal(Symbol());
 
-  let totalRuns = 0;
-  const total = computed(() => {
-    totalRuns++;
-    return numbers().reduce((_total, n) => (_total += n), 0);
+  let bRuns = 0;
+  const b = computed(() => {
+    bRuns++;
+    return a();
   });
 
-  expect(totalRuns).toBe(0);
+  expect(bRuns).toBe(0);
 
-  let avg = 0;
-  let effectRuns = 0;
+  let cRuns = 0;
   effect(() => {
-    effectRuns++;
-    avg = total() / numbers().length;
+    cRuns++;
+    a();
+    b();
   });
 
-  expect(totalRuns).toBe(1);
-  expect(effectRuns).toBe(1);
-  expect(avg).toBe(1.5);
+  expect(bRuns).toBe(1);
+  expect(cRuns).toBe(1);
 
-  numbers([1, 2, 3]);
+  setA(Symbol());
 
-  expect(totalRuns).toBe(2);
-  expect(effectRuns).toBe(2);
-  expect(avg).toBe(2);
+  expect(bRuns).toBe(2);
+  expect(cRuns).toBe(2);
 });
 
 test('computed does not run until accessed, but returns correct value immediately when called directly', async () => {
-  const s = signal(0);
+  const [n, setN] = signal(0);
   let doubleRuns = 0;
   const double = computed(() => {
     doubleRuns++;
-    return s() * 2;
+    return n() * 2;
   });
-  s(1);
+  setN(1);
   expect(doubleRuns).toBe(0);
   expect(double()).toBe(2);
   expect(doubleRuns).toBe(1);
@@ -97,8 +93,8 @@ test('computed does not run until accessed, but returns correct value immediatel
 });
 
 test('inner effects are disposed when outer effects re-run', async () => {
-  const a = signal(Symbol());
-  const b = signal(Symbol());
+  const [a, setA] = signal(Symbol());
+  const [b, setB] = signal(Symbol());
 
   let outerRuns = 0;
   let innerRuns = 0;
@@ -110,16 +106,16 @@ test('inner effects are disposed when outer effects re-run', async () => {
       b();
     });
   });
-  b(Symbol());
-  a(Symbol());
-  b(Symbol());
+  setB(Symbol());
+  setA(Symbol());
+  setB(Symbol());
   expect(outerRuns).toBe(2);
   expect(innerRuns).toBe(4); // would be 6 if inner effects are not disposed
 });
 
 test('inner effects are disposed when outer computeds re-run', async () => {
-  const a = signal(Symbol());
-  const b = signal(Symbol());
+  const [a, setA] = signal(Symbol());
+  const [b, setB] = signal(Symbol());
 
   let outerRuns = 0;
   let innerRuns = 0;
@@ -132,10 +128,10 @@ test('inner effects are disposed when outer computeds re-run', async () => {
     });
   });
   outer();
-  b(Symbol());
-  a(Symbol());
+  setB(Symbol());
+  setA(Symbol());
   outer();
-  b(Symbol());
+  setB(Symbol());
   expect(outerRuns).toBe(2);
   expect(innerRuns).toBe(4); // would be 6 if inner effects are not disposed
 });

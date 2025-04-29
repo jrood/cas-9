@@ -10,10 +10,8 @@ type _ObserverBase<F> = {
   iteration: symbol | null;
 };
 
-export type Signal<T> = (newValue?: T) => T;
 type _Signal<T> = _SubjectBase<T>;
 
-export type Computed<T> = () => T;
 type _Computed<T> = _SubjectBase<T> & _ObserverBase<T> & { stale: boolean };
 
 export type Cleanup = () => void;
@@ -24,30 +22,30 @@ type _Observer = _Computed<unknown> | _Effect;
 
 let currentObserver: _Observer | null = null;
 
-function runSignal<T>(s: _Signal<T>, args: [T]) {
-  if (args.length) {
-    if (s.value !== args[0]) {
-      s.value = args[0];
-      const q = new Set<_Effect>();
-      prepare(s, q);
-      s.observers.clear();
-      for (const e of q) runEffect(e);
-    }
-  } else {
-    currentObserver && s.observers.add(currentObserver);
-  }
+function getSignal<T>(s: _Signal<T>) {
+  currentObserver && s.observers.add(currentObserver);
   return s.value;
 }
 
-export function signal<T>(initValue: T): Signal<T> {
+function setSignal<T>(s: _Signal<T>, newValue: T) {
+  if (s.value !== newValue) {
+    s.value = newValue;
+    const q = new Set<_Effect>();
+    prepare(s, q);
+    s.observers.clear();
+    for (const e of q) runEffect(e);
+  }
+}
+
+export function signal<T>(initValue: T): [() => T, (newValue: T) => void] {
   const s: _Signal<T> = {
     value: initValue,
     observers: new Set<_Observer>(),
   };
-  return (...args) => runSignal(s, args as [T]);
+  return [() => getSignal(s), (newValue: T) => setSignal(s, newValue)];
 }
 
-export function computed<T>(fn: () => T): Computed<T> {
+export function computed<T>(fn: () => T) {
   const c: _Computed<T> = {
     value: null as T,
     fn,

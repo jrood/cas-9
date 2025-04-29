@@ -6,8 +6,8 @@ test('counter', async () => {
   const { button } = elements;
 
   function Counter() {
-    const count = signal(0);
-    return button({ onClick: () => count(count() + 1) }, count);
+    const [count, setCount] = signal(0);
+    return button({ onClick: () => setCount(count() + 1) }, count);
   }
   const counter = Counter();
 
