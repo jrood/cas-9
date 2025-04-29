@@ -14,7 +14,7 @@ to the DOM.
 
 ```html
 <script type="module">
-import { elements, render, signal, computed } from 'https://cdn.jsdelivr.net/npm/cas-9';
+import { elements, render, signal, computed } from 'https://cdn.jsdelivr.net/npm/cas-9@0.0.4';
 
 const { button } = elements;
 
