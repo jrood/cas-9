@@ -1,4 +1,4 @@
-export function signal<T>(initValue: T): (newValue?: T) => T;
+export function signal<T>(initValue: T): [() => T, (newValue?: T) => void];
 
 export function computed<T>(fn: () => T): () => T;
 
