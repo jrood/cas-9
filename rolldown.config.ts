@@ -4,8 +4,8 @@ import terser from '@rollup/plugin-terser';
 export default defineConfig({
   input: 'src/index.ts',
   output: {
-    dir: 'dist',
+    file: 'dist.js',
     minify: true,
   },
-  plugins: [terser() as Plugin],
+  plugins: [terser() as unknown as Plugin],
 });

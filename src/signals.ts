@@ -1,105 +1,108 @@
-type _SubjectBase<T> = {
+type Subject<T> = {
   value: T;
-  observers: Set<_Observer>;
+  observers: Set<Observer<unknown>>;
+};
+type Observer<T> = {
+  subjects: Set<Subject<unknown>>;
+  scope: Set<Observer<unknown>>;
+  fn: () => T;
+  untrack?: true;
 };
 
-type _ObserverBase<F> = {
-  fn: () => F;
-  initObserver: _Observer | null;
-  initIteration: symbol | null;
-  iteration: symbol | null;
-};
+type Signal<T> = Subject<T>;
+type Memo<T> = Subject<T> & Observer<T>;
+type Effect = Observer<void>;
 
-type _Signal<T> = _SubjectBase<T>;
+const stale = Symbol();
 
-type _Computed<T> = _SubjectBase<T> & _ObserverBase<T> & { stale: boolean };
+let current: Observer<unknown> | null = null;
 
-export type Cleanup = () => void;
-type _Effect = _ObserverBase<void | Cleanup> & { cleanup?: Cleanup };
+function run<T>(o: Observer<T>) {
+  const p = current;
+  current = o;
+  const v = o.fn();
+  if ('observers' in o) (o as Memo<T>).value = v;
+  current = p;
+}
 
-type _Subject = _Signal<unknown> | _Computed<unknown>;
-type _Observer = _Computed<unknown> | _Effect;
+export function untrack<T>(fn: () => T) {
+  if (current) current.untrack = true;
+  const v = fn();
+  if (current) delete current.untrack;
+  return v;
+}
 
-let currentObserver: _Observer | null = null;
+export function signal<T>(value: T) {
+  const s: Signal<T> = {
+    value,
+    observers: new Set<Observer<unknown>>(),
+  };
+  return [() => subjectGet(s), (newValue: T) => signalSet(s, newValue)] as [
+    () => T,
+    (newValue: T) => void,
+  ];
+}
 
-function getSignal<T>(s: _Signal<T>) {
-  currentObserver && s.observers.add(currentObserver);
+export function memo<T>(fn: () => T) {
+  const m: Memo<T> = {
+    fn,
+    value: stale as T,
+    subjects: new Set<Subject<unknown>>(),
+    observers: new Set<Observer<unknown>>(),
+    scope: new Set<Observer<unknown>>(),
+  };
+  current?.scope.add(m);
+  return () => subjectGet(m);
+}
+
+export function effect(fn: () => void) {
+  const e: Effect = {
+    fn,
+    subjects: new Set<Subject<unknown>>(),
+    scope: new Set<Observer<unknown>>(),
+  };
+  current?.scope.add(e);
+  run(e);
+}
+
+function subjectGet<T>(s: Subject<T>) {
+  if (current && !current.untrack) link(s, current);
+  if (s.value === stale) run(s as Memo<T>);
   return s.value;
 }
 
-function setSignal<T>(s: _Signal<T>, newValue: T) {
-  if (s.value !== newValue) {
-    s.value = newValue;
-    const q = new Set<_Effect>();
-    prepare(s, q);
-    s.observers.clear();
-    for (const e of q) runEffect(e);
-  }
+function signalSet<T>(s: Signal<T>, newValue: T) {
+  if (newValue === s.value) return;
+  s.value = newValue;
+  const effectQueue = new Set<Effect>();
+  queueObservers(s, effectQueue);
+  for (const e of effectQueue) run(e);
 }
 
-export function signal<T>(initValue: T): [() => T, (newValue: T) => void] {
-  const s: _Signal<T> = {
-    value: initValue,
-    observers: new Set<_Observer>(),
-  };
-  return [() => getSignal(s), (newValue: T) => setSignal(s, newValue)];
-}
-
-export function computed<T>(fn: () => T) {
-  const c: _Computed<T> = {
-    value: null as T,
-    fn,
-    stale: true,
-    observers: new Set<_Observer>(),
-    initObserver: currentObserver,
-    initIteration: currentObserver?.iteration ?? null,
-    iteration: null,
-  };
-  return () => runComputed(c);
-}
-function runComputed<T>(c: _Computed<T>): T {
-  currentObserver && c.observers.add(currentObserver);
-  if (c.stale) {
-    c.value = runObserver(c) as T;
-    c.stale = false;
-  }
-  return c.value as T;
-}
-
-function runObserver(o: _Observer) {
-  if (o.initIteration !== (o.initObserver?.iteration ?? null)) return;
-  const p = currentObserver;
-  currentObserver = o;
-  o.iteration = Symbol();
-  const value = o.fn();
-  currentObserver = p;
-  return value;
-}
-
-export function effect(fn: () => void | Cleanup) {
-  const e = {
-    fn,
-    initObserver: currentObserver,
-    initIteration: currentObserver?.iteration ?? null,
-    iteration: null,
-  };
-  runEffect(e);
-}
-function runEffect(e: _Effect) {
-  e.cleanup = runObserver(e) as undefined | Cleanup;
-}
-
-const isComputed = (o: _Observer): o is _Computed<unknown> =>
-  !!(o as _Computed<unknown>).observers;
-
-function prepare(s: _Subject, q: Set<_Effect>) {
+function queueObservers<T>(s: Subject<T>, effectQueue: Set<Effect>) {
   for (const o of s.observers) {
-    if (isComputed(o)) {
-      o.stale = true;
-      prepare(o, q);
-      o.observers.clear();
+    unlink(o);
+    if ('observers' in o) {
+      (o as Memo<T>).value = stale as T;
+      queueObservers(o as Memo<T>, effectQueue);
     } else {
-      q.add(o);
+      effectQueue.add(o);
     }
   }
+}
+
+function link(s: Subject<unknown>, o: Observer<unknown>) {
+  s.observers.add(o);
+  o.subjects.add(s);
+}
+
+function unlink(o: Observer<unknown>) {
+  for (const s of o.subjects) {
+    s.observers.delete(o);
+  }
+  o.subjects.clear();
+  for (const s of o.scope) {
+    unlink(s);
+  }
+  o.scope.clear();
 }

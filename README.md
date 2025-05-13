@@ -1,8 +1,6 @@
 # Cas-9
 
-Cas-9 is a no-build JavaScript framework using function-based element syntax,
-signal-based state management, and fine-grained DOM updates (no VDOM). It is
-also very small (less than 1 kB gzipped).
+Cas-9 is a JavaScript framework using JSX, signals, and fine-grained DOM updates (no VDOM). It is very small (about 1.5 kB gzipped).
 
 ## Why the name?
 
@@ -12,55 +10,55 @@ to the DOM.
 
 ## Counter example
 
-```html
-<script type="module">
-import { elements, render, signal } from 'https://cdn.jsdelivr.net/npm/cas-9@0.0.4';
-
-const { button } = elements;
+```tsx
+import { render, signal } from 'cas-9';
 
 function Counter() {
   const [count, setCount] = signal(0);
-  return button(
-    {
-      onClick: () => setCount(count() + 1),
-    },
-    count,
-  );
+  return <button onClick={() => setCount(count() + 1)}>{count}</button>;
 }
 
 render(Counter, document.body);
-</script>
 ```
 
 ## Veggie search example
 
-```html
-<script type="module">
-import { elements, render, signal, computed } from 'https://cdn.jsdelivr.net/npm/cas-9@0.0.4';
-
-const { div, input, ul, li } = elements;
+```tsx
+import { memo, render, signal } from 'cas-9';
 
 const veggies = ['beet', 'carrot', 'radish', 'turnip', 'parsnip'];
 
-function VeggieSearch() {
+export function Counter() {
   const [search, setSearch] = signal('');
 
-  const matches = computed(() =>
-    veggies.filter((veggie) => veggie.includes(search()))
+  const matches = memo(() =>
+    veggies.filter(veggie => veggie.includes(search())),
   );
 
-  return div({},
-    input({
-      onInput: (evt) => setSearch(evt.target.value),
-    }),
-    ul({},
-      () => matches().map((veggie) =>
-        li({}, veggie)
-      ),
-    ),
+  return (
+    <>
+      <input
+        onInput={(evt: InputEvent) =>
+          setSearch((evt.target as HTMLInputElement).value)
+        }
+      />
+      <ul>{() => matches().map(veggie => <li>{veggie}</li>)}</ul>
+    </>
   );
 }
 
-render(VeggieSearch, document.body);
-</script>
+render(Counter, document.body);
+```
+
+## tsconfig.json
+
+Configure `tsconfig.json` for cas-9 using `"jsx": "react-jsx"` and `"jsxImportSource": "cas-9"`.
+
+```json
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "cas-9"
+  }
+}
 ```

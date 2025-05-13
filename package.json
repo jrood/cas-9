@@ -1,12 +1,13 @@
 {
   "name": "cas-9",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist.js",
   "scripts": {
     "test": "vitest",
-    "build": "rm -fr dist && rolldown -c && cp ./src/types.d.ts ./dist/index.d.ts"
+    "build": "rolldown -c",
+    "publish": ""
   },
   "author": "John Rood",
   "license": "MIT",
