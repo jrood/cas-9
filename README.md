@@ -1,4 +1,6 @@
-<img src="./logo.svg">
+<div align="center">
+  <img src="./logo.svg">
+</div>
 
 Cas-9 is a JavaScript framework using JSX, signals, and fine-grained DOM updates (no VDOM). It is very small (about 1.5 kB gzipped).
 
