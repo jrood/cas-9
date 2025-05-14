@@ -1,6 +1,6 @@
 {
   "name": "cas-9",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
   "main": "dist.js",
