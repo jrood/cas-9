@@ -28,7 +28,7 @@ import { memo, render, signal } from 'cas-9';
 
 const veggies = ['beet', 'carrot', 'radish', 'turnip', 'parsnip'];
 
-export function Counter() {
+export function VeggieSearch() {
   const [search, setSearch] = signal('');
 
   const matches = memo(() =>
@@ -37,17 +37,15 @@ export function Counter() {
 
   return (
     <>
-      <input
-        onInput={(evt: InputEvent) =>
-          setSearch((evt.target as HTMLInputElement).value)
-        }
-      />
-      <ul>{() => matches().map(veggie => <li>{veggie}</li>)}</ul>
+      <input onInput={(evt) => setSearch(evt.target.value)}/>
+      <ul>{() =>
+        matches().map(veggie => <li>{veggie}</li>)
+      }</ul>
     </>
   );
 }
 
-render(Counter, document.body);
+render(VeggieSearch, document.body);
 ```
 
 ## tsconfig.json
