@@ -62,3 +62,26 @@ test('nested changes', () => {
   expect(r.children[2].innerText).toBe('11');
   expect(r.children[4].innerText).toBe('101');
 });
+
+test('empty array as signal result', () => {
+  const [a, setA] = signal([10]);
+  const [b, setB] = signal([20]);
+  const [c, setC] = signal([30]);
+  const r = (
+    <div>
+      {() => a().map(x => <div>{x}</div>)}
+      {() => b().map(x => <div>{x}</div>)}
+      {() => c().map(x => <div>{x}</div>)}
+    </div>
+  )
+  expect(r.children[0].innerText).toBe('10');
+  expect(r.children[1].innerText).toBe('20');
+  expect(r.children[2].innerText).toBe('30');
+  setB([]);
+  expect(r.children[0].innerText).toBe('10');
+  expect(r.children[1].innerText).toBe('30');
+  setB([20]);
+  expect(r.children[0].innerText).toBe('10');
+  expect(r.children[1].innerText).toBe('20');
+  expect(r.children[2].innerText).toBe('30');
+})

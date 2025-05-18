@@ -2,9 +2,8 @@
   <img src="./logo.svg">
 </div>
 
-Cas-9 is a JavaScript framework using JSX, signals, and fine-grained DOM updates.
+Cas-9 is a small (less than 1 kB gzipped) JavaScript framework using JSX, signals, and fine-grained DOM updates.
 There is no VDOM, and component functions only run once.
-It is very small (less than 1 kB gzipped).
 
 ## Why the name?
 

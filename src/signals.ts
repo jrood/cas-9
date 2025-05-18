@@ -1,41 +1,41 @@
-type Subject<T> = {
-  value: T;
-  observers: Set<Observer<unknown>>;
+type Subject = {
+  v: any;
+  o: Set<Observer>;
 };
-type Observer<T> = {
-  subjects: Set<Subject<unknown>>;
-  scope: Set<Observer<unknown>>;
-  fn: () => T;
-  untrack?: true;
+type Observer = {
+  f: () => any;
+  s: Set<Subject>;
+  c: Set<Observer>; // child scope
+  u?: true; // untrack
 };
 
-type Signal<T> = Subject<T>;
-type Memo<T> = Subject<T> & Observer<T>;
-type Effect = Observer<void>;
+type Signal = Subject;
+type Memo = Subject & Observer;
+type Effect = Observer;
 
-const stale = Symbol();
+const stale = Symbol(); // stale
 
-let current: Observer<unknown> | null = null;
+let x: Observer; // current observer
 
-function run<T>(o: Observer<T>) {
-  const p = current;
-  current = o;
-  const v = o.fn();
-  if ('observers' in o) (o as Memo<T>).value = v;
-  current = p;
+function run(o: Observer) {
+  const p = x;
+  x = o;
+  const v = o.f();
+  if ('o' in o) (o as Memo).v = v;
+  x = p;
 }
 
-export function untrack<T>(fn: () => T) {
-  if (current) current.untrack = true;
-  const v = fn();
-  if (current) delete current.untrack;
+export function untrack<T>(f: () => T) {
+  if (x) x.u = true;
+  const v = f();
+  if (x) delete x.u;
   return v;
 }
 
 export function signal<T>(value: T) {
-  const s: Signal<T> = {
-    value,
-    observers: new Set<Observer<unknown>>(),
+  const s: Signal = {
+    v: value,
+    o: new Set<Observer>(),
   };
   return [() => subjectGet(s), (newValue: T) => signalSet(s, newValue)] as [
     () => T,
@@ -43,66 +43,62 @@ export function signal<T>(value: T) {
   ];
 }
 
-export function memo<T>(fn: () => T) {
-  const m: Memo<T> = {
-    fn,
-    value: stale as T,
-    subjects: new Set<Subject<unknown>>(),
-    observers: new Set<Observer<unknown>>(),
-    scope: new Set<Observer<unknown>>(),
+export function memo(f: () => any) {
+  const m: Memo = {
+    f,
+    v: stale,
+    s: new Set<Subject>(),
+    o: new Set<Observer>(),
+    c: new Set<Observer>(),
   };
-  current?.scope.add(m);
+  x?.c.add(m);
   return () => subjectGet(m);
 }
 
-export function effect(fn: () => void) {
+export function effect(f: () => void) {
   const e: Effect = {
-    fn,
-    subjects: new Set<Subject<unknown>>(),
-    scope: new Set<Observer<unknown>>(),
+    f,
+    s: new Set<Subject>(),
+    c: new Set<Observer>(),
   };
-  current?.scope.add(e);
+  x?.c.add(e);
   run(e);
 }
 
-function subjectGet<T>(s: Subject<T>) {
-  if (current && !current.untrack) link(s, current);
-  if (s.value === stale) run(s as Memo<T>);
-  return s.value;
+function subjectGet(s: Subject) {
+  if (x && !x.u) link(s, x);
+  if (s.v === stale) run(s as Memo);
+  return s.v;
 }
 
-function signalSet<T>(s: Signal<T>, newValue: T) {
-  if (newValue === s.value) return;
-  s.value = newValue;
-  const effectQueue = new Set<Effect>();
-  queueObservers(s, effectQueue);
-  for (const e of effectQueue) run(e);
+function signalSet(s: Signal, newValue: any) {
+  if (newValue === s.v) return;
+  s.v = newValue;
+  const q = new Set<Effect>();
+  queueObservers(s, q);
+  for (const e of q) run(e);
 }
 
-function queueObservers<T>(s: Subject<T>, effectQueue: Set<Effect>) {
-  for (const o of s.observers) {
+function queueObservers(s: Subject, q: Set<Effect>) {
+  for (const o of s.o) {
     unlink(o);
-    if ('observers' in o) {
-      (o as Memo<T>).value = stale as T;
-      queueObservers(o as Memo<T>, effectQueue);
+    if ('o' in o) {
+      (o as Memo).v = stale;
+      queueObservers(o as Memo, q);
     } else {
-      effectQueue.add(o);
+      q.add(o);
     }
   }
 }
 
-function link(s: Subject<unknown>, o: Observer<unknown>) {
-  s.observers.add(o);
-  o.subjects.add(s);
+function link(s: Subject, o: Observer) {
+  s.o.add(o);
+  o.s.add(s);
 }
 
-function unlink(o: Observer<unknown>) {
-  for (const s of o.subjects) {
-    s.observers.delete(o);
-  }
-  o.subjects.clear();
-  for (const s of o.scope) {
-    unlink(s);
-  }
-  o.scope.clear();
+function unlink(o: Observer) {
+  for (const s of o.s) s.o.delete(o);
+  o.s.clear();
+  for (const s of o.c) unlink(s);
+  o.c.clear();
 }

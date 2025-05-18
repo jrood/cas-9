@@ -1,95 +1,100 @@
 import { expect, test } from 'vitest';
 import { signal, memo, effect, untrack } from './signals';
 
-test('diamond problem', () => {
-  /*       d
-   *     ↗   ↖
-   *   b       c
-   *     ↖   ↗
-   *       a
+test('diamond', () => {
+  /*
+   *         d
+   *       ↗   ↖
+   *     b       c
+   *       ↖   ↗
+   *         a
    */
-
   const [a, setA] = signal(Symbol());
-
-  let bRuns = 0;
+  const runs = { b: 0, c: 0, d: 0 };
   const b = memo(() => {
-    bRuns++;
+    runs.b++;
     return a();
   });
-
-  let cRuns = 0;
   const c = memo(() => {
-    cRuns++;
+    runs.c++;
     return a();
   });
-
-  expect(bRuns).toBe(0);
-  expect(cRuns).toBe(0);
-
-  let dRuns = 0;
+  expect(runs).toEqual({ b: 0, c: 0, d: 0 });
   effect(() => {
-    dRuns++;
+    runs.d++;
     b();
     c();
   });
-
-  expect(bRuns).toBe(1);
-  expect(cRuns).toBe(1);
-  expect(dRuns).toBe(1);
-
+  expect(runs).toEqual({ b: 1, c: 1, d: 1 });
   setA(Symbol());
-
-  expect(bRuns).toBe(2);
-  expect(cRuns).toBe(2);
-  expect(dRuns).toBe(2);
+  expect(runs).toEqual({ b: 2, c: 2, d: 2 });
 });
 
-test('flag problem', () => {
-  /*   c
-   *     ↖
-   *   ↑   b
-   *     ↗
-   *   a
+test('flag', () => {
+  /*
+   *       c
+   *       ↑ ↖
+   *       ↑   b
+   *       ↑ ↗
+   *       a
    */
-
   const [a, setA] = signal(Symbol());
-
-  let bRuns = 0;
+  const runs = { b: 0, c: 0 };
   const b = memo(() => {
-    bRuns++;
+    runs.b++;
     return a();
   });
-
-  expect(bRuns).toBe(0);
-
-  let cRuns = 0;
+  expect(runs).toEqual({ b: 0, c: 0 });
   effect(() => {
-    cRuns++;
+    runs.c++;
     a();
     b();
   });
-
-  expect(bRuns).toBe(1);
-  expect(cRuns).toBe(1);
-
+  expect(runs).toEqual({ b: 1, c: 1 });
   setA(Symbol());
-
-  expect(bRuns).toBe(2);
-  expect(cRuns).toBe(2);
+  expect(runs).toEqual({ b: 2, c: 2 });
 });
 
-test('memo does not run until accessed, but returns correct value immediately when called directly', () => {
+test('Y', () => {
+  /*
+   *    c      d
+   *     ↖   ↗
+   *       b
+   *       ↑
+   *       a
+   */
+  const [a, setA] = signal(Symbol());
+  const runs = { b: 0, c: 0, d: 0 };
+  const b = memo(() => {
+    runs.b++;
+    return a();
+  });
+  const c = memo(() => {
+    runs.c++;
+    return a();
+  });
+  expect(runs).toEqual({ b: 0, c: 0, d: 0 });
+  effect(() => {
+    runs.d++;
+    b();
+    c();
+  });
+  expect(runs).toEqual({ b: 1, c: 1, d: 1 });
+  setA(Symbol());
+  expect(runs).toEqual({ b: 2, c: 2, d: 2 });
+});
+
+test('memo does not run until accessed, returns correct value immediately when called', () => {
   const [n, setN] = signal(0);
-  let doubleRuns = 0;
+  const runs = { double: 0 };
   const double = memo(() => {
-    doubleRuns++;
+    runs.double++;
     return n() * 2;
   });
   setN(1);
-  expect(doubleRuns).toBe(0);
+  expect(runs).toEqual({ double: 0 });
   expect(double()).toBe(2);
-  expect(doubleRuns).toBe(1);
-  expect(doubleRuns).toBe(1);
+  expect(runs).toEqual({ double: 1 });
 });
 
 test('effect are disposed', () => {
@@ -98,12 +103,7 @@ test('effect are disposed', () => {
     b: signal(Symbol()),
     c: signal(Symbol()),
   };
-
-  const runs = {
-    a: 0,
-    b: 0,
-    c: 0,
-  };
+  const runs = { a: 0, b: 0, c: 0 };
   effect(() => {
     signals.a[0]();
     runs.a++;
@@ -135,13 +135,7 @@ test('memos are disposed', () => {
     b: signal(Symbol()),
     c: signal(Symbol()),
   };
-
-  const runs = {
-    a: 0,
-    b: 0,
-    c: 0,
-  };
-
+  const runs = { a: 0, b: 0, c: 0 };
   const a = memo(() => {
     signals.a[0]();
     runs.a++;
@@ -214,18 +208,11 @@ test('unsubscribes/resubscribes memo from unused signals', () => {
   setA(false);
   expect(runs).toEqual(3);
   setB(Symbol());
-  setB(Symbol());
-  setB(Symbol());
-  // hmm, b doesn't know that a caused the effect to run
-  // it takes one extra run with b to unsub the effect
-  // perhaps effects should know the associated subjects
-
   expect(runs).toEqual(3);
 });
 
 test('current is reset once an observer finishes', () => {
   const [s, setS] = signal(Symbol());
-
   let runs = 0;
   effect(() => {
     runs++;
