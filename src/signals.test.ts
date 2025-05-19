@@ -182,9 +182,6 @@ test('unsubscribes/resubscribes effect from unused signals', () => {
   setB(Symbol());
   setB(Symbol());
   setB(Symbol());
-  // hmm, b doesn't know that a caused the effect to run
-  // it takes one extra run with b to unsub the effect
-  // perhaps effects should know the associated subjects
 
   expect(runs).toEqual(3);
 });

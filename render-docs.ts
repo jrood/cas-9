@@ -82,6 +82,10 @@ const page = `
   <!DOCTYPE html>
   <html>
     <head>
+      <title>Cas-9</title>
+      <link rel=icon href=data:>
+      <meta charset=UTF-8>
+      <meta name=viewport content="width=device-width,initial-scale=1">
       <style>${css.code}</style>
       <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=JetBrains+Mono&display=swap" rel="stylesheet">
     </head>
