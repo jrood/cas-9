@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { signal, memo, effect, untrack } from './signals';
+import { signal, computed, effect, untrack } from './signals';
 
 test('diamond', () => {
   /*
@@ -11,11 +11,11 @@ test('diamond', () => {
    */
   const [a, setA] = signal(Symbol());
   const runs = { b: 0, c: 0, d: 0 };
-  const b = memo(() => {
+  const b = computed(() => {
     runs.b++;
     return a();
   });
-  const c = memo(() => {
+  const c = computed(() => {
     runs.c++;
     return a();
   });
@@ -40,7 +40,7 @@ test('flag', () => {
    */
   const [a, setA] = signal(Symbol());
   const runs = { b: 0, c: 0 };
-  const b = memo(() => {
+  const b = computed(() => {
     runs.b++;
     return a();
   });
@@ -65,11 +65,11 @@ test('Y', () => {
    */
   const [a, setA] = signal(Symbol());
   const runs = { b: 0, c: 0, d: 0 };
-  const b = memo(() => {
+  const b = computed(() => {
     runs.b++;
     return a();
   });
-  const c = memo(() => {
+  const c = computed(() => {
     runs.c++;
     return a();
   });
@@ -84,10 +84,10 @@ test('Y', () => {
   expect(runs).toEqual({ b: 2, c: 2, d: 2 });
 });
 
-test('memo does not run until accessed, returns correct value immediately when called', () => {
+test('computed does not run until accessed, returns correct value immediately when called', () => {
   const [n, setN] = signal(0);
   const runs = { double: 0 };
-  const double = memo(() => {
+  const double = computed(() => {
     runs.double++;
     return n() * 2;
   });
@@ -129,20 +129,20 @@ test('effect are disposed', () => {
   expect(runs).toEqual({ a: 2, b: 3, c: 6 });
 });
 
-test('memos are disposed', () => {
+test('computeds are disposed', () => {
   const signals = {
     a: signal(Symbol()),
     b: signal(Symbol()),
     c: signal(Symbol()),
   };
   const runs = { a: 0, b: 0, c: 0 };
-  const a = memo(() => {
+  const a = computed(() => {
     signals.a[0]();
     runs.a++;
-    const b = memo(() => {
+    const b = computed(() => {
       signals.b[0]();
       runs.b++;
-      const c = memo(() => {
+      const c = computed(() => {
         signals.c[0]();
         runs.c++;
       });
@@ -189,11 +189,11 @@ test('unsubscribes/resubscribes effect from unused signals', () => {
   expect(runs).toEqual(3);
 });
 
-test('unsubscribes/resubscribes memo from unused signals', () => {
+test('unsubscribes/resubscribes computed from unused signals', () => {
   const [a, setA] = signal(true);
   const [b, setB] = signal(Symbol());
   let runs = 0;
-  const m = memo(() => {
+  const m = computed(() => {
     runs++;
     if (a()) {
       b();
@@ -226,10 +226,10 @@ test('current is reset once an observer finishes', () => {
   expect(runs).toBe(2);
 });
 
-test('memo not called by one effect still works for another', () => {
+test('computed not called by one effect still works for another', () => {
   const [s, setS] = signal(Symbol());
   const [tf, setTf] = signal(true);
-  const m = memo(() => {
+  const m = computed(() => {
     return s();
   });
   const e = {

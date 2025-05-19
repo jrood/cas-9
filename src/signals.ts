@@ -10,7 +10,7 @@ type Observer = {
 };
 
 type Signal = Subject;
-type Memo = Subject & Observer;
+type Computed = Subject & Observer;
 type Effect = Observer;
 
 const stale = Symbol(); // stale
@@ -21,7 +21,7 @@ function run(o: Observer) {
   const p = x;
   x = o;
   const v = o.f();
-  if ('o' in o) (o as Memo).v = v;
+  if ('o' in o) (o as Computed).v = v;
   x = p;
 }
 
@@ -43,8 +43,8 @@ export function signal<T>(value: T) {
   ];
 }
 
-export function memo(f: () => any) {
-  const m: Memo = {
+export function computed(f: () => any) {
+  const m: Computed = {
     f,
     v: stale,
     s: new Set<Subject>(),
@@ -67,7 +67,7 @@ export function effect(f: () => void) {
 
 function subjectGet(s: Subject) {
   if (x && !x.u) link(s, x);
-  if (s.v === stale) run(s as Memo);
+  if (s.v === stale) run(s as Computed);
   return s.v;
 }
 
@@ -83,8 +83,8 @@ function queueObservers(s: Subject, q: Set<Effect>) {
   for (const o of s.o) {
     unlink(o);
     if ('o' in o) {
-      (o as Memo).v = stale;
-      queueObservers(o as Memo, q);
+      (o as Computed).v = stale;
+      queueObservers(o as Computed, q);
     } else {
       q.add(o);
     }

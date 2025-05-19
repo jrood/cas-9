@@ -1,5 +1,5 @@
 export function signal<T>(value: T): [() => T, (newValue: T) => void];
-export function memo<T>(fn: () => T): () => T;
+export function computed<T>(fn: () => T): () => T;
 export function effect(fn: () => void): void;
 export function render(content: any, container: HTMLElement): void;
 export function untrack<T>(fn: () => T): T;

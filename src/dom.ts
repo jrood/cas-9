@@ -45,8 +45,14 @@ export function render(
     .flat(9)
     .filter(c => c != null && c !== false) as NonNullable<Part>[];
   if (prevs.length && !flat.length) flat.push(document.createComment(''));
+  let q: Node[] = [];
+  const flush = () => {
+    container.append(...q);
+    q = [];
+  };
   for (const c of flat) {
     if (c instanceof Function) {
+      q.length && flush();
       let prev: Node[];
       effect(() => {
         const _anchor = prev?.[0];
@@ -64,9 +70,10 @@ export function render(
         anchor.parentElement?.insertBefore(n, anchor);
         for (const p of prevs) p.splice(p.indexOf(anchor), 0, n);
       } else {
-        container.appendChild(n);
+        q.push(n);
         for (const p of prevs) p.push(n);
       }
     }
   }
+  flush();
 }
