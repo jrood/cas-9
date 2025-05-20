@@ -25,56 +25,10 @@ let htmlContent = marked(content, { renderer }) as string;
 for (const [id, promise] of codeBlocks) {
   htmlContent = htmlContent.replace(id, await promise);
 }
-const styles = `
-  body {
-    font-family: Figtree, system-ui;
-    margin: 0;
-    padding: 0;
-  }
-  main {
-    max-width: 768px;
-    margin: 0 auto;
-    padding: 2rem;
-    border-radius: 2rem;
-    background: #f8f4f0;
-    box-shadow: inset 0 17rem 0 0 #fff;
-  }
-  p {
-    line-height: 1.5rem;
-  }
-  .logo {
-    margin-bottom: 4rem;
-    display: flex;
-    height: 12rem;
-    align-items: center;
-    justify-content: center;
-  }
-  h1, h2, h3, h4 {
-    font-weight: 600;
-    margin-top: 2rem;
-    margin-bottom: .5rem;
-  }
-  pre {
-    font-family: "JetBrains Mono";
-    font-size: 14px;
-    padding: 1rem;
-    border-radius: .5rem;
-    overflow-x: auto;
-  }
-  code {
-    font-family: inherit;
-  }
-  .repo-link {
-    display: flex;
-    flex-direction: row-reverse;
-  }
-  a {
-    color: #f60;
-  }
-`;
+
 const css = transform({
   filename: 'styles.css',
-  code: Buffer.from(styles),
+  code: readFileSync('docs.css'),
   minify: true,
   sourceMap: false,
 });
