@@ -37,7 +37,7 @@ const page = `
   <html>
     <head>
       <title>Cas-9</title>
-      <link rel=icon href=data:>
+      <link rel=icon href="icon.svg">
       <meta charset=UTF-8>
       <meta name=viewport content="width=device-width,initial-scale=1">
       <style>${css.code}</style>
@@ -59,3 +59,4 @@ writeFileSync(
 );
 
 copyFileSync('logo.svg', 'docs/logo.svg');
+copyFileSync('icon.svg', 'docs/icon.svg');
