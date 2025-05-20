@@ -1,6 +1,6 @@
 {
   "name": "cas-9",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
   "main": "dist.js",
@@ -11,6 +11,7 @@
   },
   "author": "John Rood",
   "license": "MIT",
+  "homepage": "https://cas-9.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/jrood/cas-9"
