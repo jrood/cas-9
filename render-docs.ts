@@ -2,7 +2,7 @@
  * Render docs (currently just README.md) to html
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync } from 'node:fs';
 import { marked, Renderer } from 'marked';
 import { codeToHtml } from 'shiki';
 import { minify } from 'html-minifier-terser';
@@ -99,4 +99,9 @@ const page = `
     </body>
   </html>
 `;
-writeFileSync('README.html', await minify(page, { collapseWhitespace: true }));
+writeFileSync(
+  'docs/index.html',
+  await minify(page, { collapseWhitespace: true }),
+);
+
+copyFileSync('logo.svg', 'docs/logo.svg');

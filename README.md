@@ -4,7 +4,7 @@
 
 Cas-9 is a small (less than 1 kB gzipped) JavaScript framework using JSX, signals, and fine-grained DOM updates. There is no VDOM. Component functions only run once.
 
-⚠️ This is an experimental framework, not yet fit for production. If you're looking for a similar feature-rich and battle-tested solution, consider [Solid](https://docs.solidjs.com/).
+⚠️ This is an experimental framework, not yet fit for production. If you're looking for a similar solution that is feature-rich and battle-tested, consider [Solid](https://docs.solidjs.com/).
 
 ## Why the name?
 
