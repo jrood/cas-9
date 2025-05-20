@@ -11,6 +11,14 @@ Cas-9 is a small (less than 1 kB gzipped) JavaScript framework using JSX, signal
 In molecular biology, Cas9 is the "gene scissors" molecule used to make precise edits to DNA.
 This library is the size of a molecule and makes precise updates to the DOM.
 
+## Get started
+```sh
+npx degit jrood/cas-9-starter my-app
+cd my-app
+npm i
+npm run dev
+```
+
 ## Concepts
 
 Create signals as getter/setter tuples.
