@@ -90,3 +90,36 @@ test('updates attribute', () => {
   cssClass('b');
   expect(d.className).toEqual('b');
 });
+
+test('input value is is two-way binding', () => {
+  const s = signal('a');
+  const i = (<input value={s} />) as HTMLInputElement;
+  expect(i.value).toBe('a');
+  i.value = 'b';
+  i.dispatchEvent(new InputEvent('input'));
+  expect(s()).toBe('b');
+  s('c');
+  expect(i.value).toBe('c');
+});
+
+test('select value is is two-way binding', () => {
+  const s = signal('a');
+  const a = <option value='a'>A</option>;
+  const b = <option value='b'>B</option>;
+  const c = <option value='c'>C</option>;
+  const i = (
+    <select value={s}>
+      {a}
+      {b}
+      {c}
+    </select>
+  ) as HTMLSelectElement;
+  expect(i.value).toBe('a');
+  i.value = 'b';
+  i.dispatchEvent(new InputEvent('input'));
+  expect(s()).toBe('b');
+  s('c');
+  expect(s()).toBe('c');
+  a.selected = true;
+  expect(i.value).toBe('a');
+});

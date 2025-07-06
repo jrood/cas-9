@@ -8,6 +8,8 @@ export namespace JSX {
   export type IntrinsicElements = { [tag: string]: Record<string, any> };
 }
 
+const twoWay = new Set(['value', 'checked']);
+
 export function jsx(t: Tag, p: Props) {
   if (t instanceof Function) {
     const sub = setCurrentSub(undefined);
@@ -24,9 +26,18 @@ export function jsx(t: Tag, p: Props) {
     } else if (k.startsWith('on') && k[2] == k[2].toUpperCase()) {
       e.addEventListener(k.slice(2).toLowerCase(), v);
     } else if (v instanceof Function) {
-      effect(() => e.setAttribute(k, v()));
+      if (twoWay.has(k)) {
+        effect(() => ((e as any)[k] = v()));
+        e.addEventListener('input', () => v((e as any)[k]));
+      } else {
+        effect(() => e.setAttribute(k, v()));
+      }
     } else {
-      e.setAttribute(k, v);
+      if (twoWay.has(k)) {
+        (e as any)[k] = v;
+      } else {
+        e.setAttribute(k, v);
+      }
     }
   }
   render(children, e);
