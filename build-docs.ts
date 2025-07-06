@@ -19,6 +19,7 @@ renderer.code = ({ text, lang }) => {
 };
 
 const content = readFileSync('README.md', 'utf-8');
+const logo = readFileSync('logo.svg', 'utf-8');
 
 let htmlContent = marked(content, { renderer }) as string;
 
@@ -37,7 +38,7 @@ const page = `
   <html>
     <head>
       <title>Cas-9</title>
-      <link rel=icon href="icon.svg">
+      <link rel=icon href="data:">
       <meta charset=UTF-8>
       <meta name=viewport content="width=device-width,initial-scale=1">
       <style>${css.code}</style>
@@ -48,7 +49,7 @@ const page = `
         <div class="repo-link">
           <a href="https://github.com/jrood/cas-9">github.com/jrood/cas-9</a>
         </div>
-        ${htmlContent}
+        ${htmlContent.replace('<img src="./logo.svg">', logo)}
       </main>
     </body>
   </html>
@@ -57,6 +58,3 @@ writeFileSync(
   'docs/index.html',
   await minify(page, { collapseWhitespace: true }),
 );
-
-copyFileSync('logo.svg', 'docs/logo.svg');
-copyFileSync('icon.svg', 'docs/icon.svg');

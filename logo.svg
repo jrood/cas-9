@@ -1,34 +1,64 @@
-<svg width="196" height="76" stroke-width="8" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <title>Cas-9</title>
-  <g stroke="#000" mask="url(#1)">
-    <rect x="8" y="8" width="24" height="48" rx="12" />
-    <rect x="88" y="8" width="24" height="48" rx="12" />
+<svg
+  width="206"
+  height="82"
+  stroke-width="8"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect x="0" y="0" width="206" height="82" fill="#fff" stroke="none" rx="4" />
+  <g stroke="#000" fill="none">
+    <rect x="12" y="12" width="24" height="48" rx="12" />
+    <rect x="92" y="12" width="24" height="48" rx="12" />
   </g>
-  <mask id="1">
-    <rect x="0" y="0" width="196" height="76" fill="#fff" />
-    <rect x="16" y="20" width="104" height="24" fill="#000" />
-  </mask>
-  <g stroke="#000" fill="none" mask="url(#2)">
-    <line x1="42" y1="64" x2="60" y2="0" />
-    <line x1="78" y1="64" x2="60" y2="0" />
-    <line x1="50" y1="44" x2="70" y2="44" />
+  <rect
+    x="20"
+    y="24"
+    width="104"
+    height="24"
+    stroke="none"
+    fill="#fff"
+  />
+  <g stroke="#000" fill="none">
+    <line x1="46" y1="68" x2="64" y2="4" />
+    <line x1="82" y1="68" x2="64" y2="4" />
+    <line x1="54" y1="46" x2="74" y2="46" />
   </g>
-  <mask id="2">
-    <rect x="36" y="4" width="48" height="56" fill="#fff" />
-  </mask>
-  <path d="M88 20 C88 36 112 28 112 44" stroke="#000"  />
-  <g stroke="#f60">
-    <circle cx="176" cy="56" r="12" />
-    <line x1="128" y1="44" x2="176" y2="44" />
-    <circle cx="128" cy="48" r="8" fill="#f60" stroke="none" mask="url(#3)" />
+  <g stroke="#fff">
+    <line x1="58" x2="70" y1="4" y2="4" />
+    <line x1="40" x2="88" y1="68" y2="68" />
   </g>
-  <g stroke="#000" transform-origin="155 44" transform="rotate(-55)">
-    <circle cx="176" cy="32" r="12" />
-    <line x1="128" y1="44" x2="176" y2="44" />
-    <circle cx="128" cy="40" r="8" fill="#000" stroke="none" mask="url(#3)" />
+  <path d="M92 24 C92 40 116 32 116 48" stroke="#000" />
+  <g stroke="color(display-p3 1 .35 0)">
+    <circle cx="182" cy="58" r="12" />
+    <line x1="162" y1="46" x2="182" y2="46" />
+    <line x1="135.25" y1="46" x2="162" y2="46" />
+    <circle cx="135.25" cy="50" r="8" fill="color(display-p3 1 .35 0)" stroke="none" />
+    <line
+      x1="122"
+      y1="54"
+      x2="144"
+      y2="54"
+      stroke="#fff"
+    />
   </g>
-  <mask id="3">
-    <line x1="120" y1="44" x2="128" y2="44" stroke="#fff" />
-  </mask>
-  <circle cx="155" cy="44" r="2" stroke="none" fill="#fff" />
+  <g stroke="#000" transform-origin="163.5 46" transform="rotate(-52.5)">
+    <circle cx="182" cy="34" r="12" />
+    <line x1="135.25" y1="46" x2="182" y2="46" />
+    <circle cx="135.25" cy="42" r="8" fill="#000" stroke="none" />
+  </g>
+  <g
+    stroke="#fff"
+    transform-origin="163.5 46"
+    transform="rotate(-52.5)"
+  >
+    <line x1="126" y1="38" x2="166" y2="38" stroke-width="8" />
+    <line x1="138" y1="51" x2="182" y2="51" stroke-width="2" />
+  </g>
+  <circle
+    cx="163.5"
+    cy="46"
+    r="2"
+    stroke="none"
+    fill="#fff"
+  />
 </svg>
