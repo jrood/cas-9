@@ -2,7 +2,7 @@
   <img src="./logo.svg">
 </div>
 
-Cas-9 is a tiny JavaScript framework (618 bytes gzipped). Much like [SolidJS](https://docs.solidjs.com/), it uses JSX function components and fine-grained reactivity without a VDOM. Cas-9 focuses on minimalism and uses [Alien Signals](https://github.com/stackblitz/alien-signals), which is currently the fastest JavaScript signals implementation.
+Cas-9 is a tiny JavaScript framework (618 bytes gzipped). Much like [SolidJS](https://docs.solidjs.com/), it uses JSX function components and fine-grained reactivity without a VDOM. Cas-9 focuses on minimalism and uses [Alien Signals](https://github.com/stackblitz/alien-signals) for state, which is currently the fastest JavaScript signals implementation.
 
 ## Why the name?
 
@@ -20,7 +20,7 @@ npm run dev
 
 ```tsx
 import { signal } from 'alien-signals';
-import { render} from 'cas-9';
+import { render } from 'cas-9';
 
 function Counter() {
   const count = signal(0);
