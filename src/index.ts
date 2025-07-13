@@ -8,7 +8,7 @@ export namespace JSX {
   export type IntrinsicElements = { [tag: string]: Record<string, any> };
 }
 
-const twoWay = new Set(['value', 'checked']);
+const inputValue = new Set(['value', 'checked']);
 
 export function jsx(t: Tag, p: Props) {
   if (t instanceof Function) {
@@ -26,22 +26,26 @@ export function jsx(t: Tag, p: Props) {
     } else if (k.startsWith('on') && k[2] == k[2].toUpperCase()) {
       e.addEventListener(k.slice(2).toLowerCase(), v);
     } else if (v instanceof Function) {
-      if (twoWay.has(k)) {
-        effect(() => ((e as any)[k] = v()));
-        e.addEventListener('input', () => v((e as any)[k]));
-      } else {
-        effect(() => e.setAttribute(k, v()));
+      effect(() => {
+        setAttrOrProp(e, k, v());
+      });
+      if (inputValue.has(k)) {
+        e.addEventListener('input', () => v(e[k]));
       }
     } else {
-      if (twoWay.has(k)) {
-        (e as any)[k] = v;
-      } else {
-        e.setAttribute(k, v);
-      }
+      setAttrOrProp(e, k, v);
     }
   }
   render(children, e);
   return e;
+}
+
+function setAttrOrProp(e: HTMLElement, k: string, v: any) {
+  if (inputValue.has(k) || typeof (e as any)[k] === 'boolean') {
+    e[k] = v;
+  } else {
+    e.setAttribute(k, v);
+  }
 }
 
 export { jsx as jsxDEV, jsx as jsxs, jsx as jsxsDEV };
