@@ -8,7 +8,7 @@ export namespace JSX {
   export type IntrinsicElements = { [tag: string]: Record<string, any> };
 }
 
-const inputValue = new Set(['value', 'checked']);
+const propKeys = new Set(['value', 'checked', 'disabled']);
 
 export function jsx(t: Tag, p: Props) {
   if (t instanceof Function) {
@@ -29,9 +29,6 @@ export function jsx(t: Tag, p: Props) {
       effect(() => {
         setAttrOrProp(e, k, v());
       });
-      if (inputValue.has(k)) {
-        e.addEventListener('input', () => v(e[k]));
-      }
     } else {
       setAttrOrProp(e, k, v);
     }
@@ -41,7 +38,7 @@ export function jsx(t: Tag, p: Props) {
 }
 
 function setAttrOrProp(e: HTMLElement, k: string, v: any) {
-  if (inputValue.has(k) || typeof (e as any)[k] === 'boolean') {
+  if (propKeys.has(k)) {
     e[k] = v;
   } else {
     e.setAttribute(k, v);
