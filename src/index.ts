@@ -8,7 +8,7 @@ export namespace JSX {
   export type IntrinsicElements = { [tag: string]: Record<string, any> };
 }
 
-const propKeys = new Set(['value', 'checked', 'disabled']);
+const propKeys = new Set(['value', 'checked', 'disabled', 'selected']);
 
 export function jsx(t: Tag, p: Props) {
   if (t instanceof Function) {
