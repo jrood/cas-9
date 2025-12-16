@@ -1,6 +1,6 @@
 {
   "name": "cas-9",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
   "main": "jsx-runtime.js",
