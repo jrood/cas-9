@@ -2,6 +2,8 @@
   "include": ["**/*.test.tsx"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "."
+    "jsxImportSource": ".",
+    "downlevelIteration": true,
+    "noImplicitAny": false,
   }
 }

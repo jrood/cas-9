@@ -28,11 +28,11 @@
     <line x1="40" x2="88" y1="68" y2="68" />
   </g>
   <path d="M92 24 C92 40 116 32 116 48" stroke="#000" />
-  <g stroke="color(display-p3 1 .35 0)">
+  <g stroke="color(display-p3 1 .4 0)">
     <circle cx="182" cy="58" r="12" />
     <line x1="162" y1="46" x2="182" y2="46" />
     <line x1="135.25" y1="46" x2="162" y2="46" />
-    <circle cx="135.25" cy="50" r="8" fill="color(display-p3 1 .35 0)" stroke="none" />
+    <circle cx="135.25" cy="50" r="8" fill="color(display-p3 1 .4 0)" stroke="none" />
     <line
       x1="122"
       y1="54"
