@@ -1,6 +1,6 @@
 {
   "name": "cas-9",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
   "main": "jsx-runtime.js",
@@ -39,8 +39,5 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
-  },
-  "dependencies": {
-    "cas-9": "link:"
   }
 }
