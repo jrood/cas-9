@@ -1,6 +1,6 @@
 {
   "name": "cas-9",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "A tiny library for making interactive web apps",
   "type": "module",
   "main": "jsx-runtime.js",
@@ -8,6 +8,7 @@
     "test": "vitest",
     "build": "node --experimental-strip-types build.ts",
     "build-docs": "node --experimental-strip-types build-docs.ts",
+    "deploy-docs": "wrangler pages deploy docs",
     "get-gzip-size": "pnpm build && gzip -c dist/index.js | wc -c"
   },
   "author": "John Rood",
@@ -27,7 +28,8 @@
     "oxc-minify": "^0.74.0",
     "oxc-transform": "^0.74.0",
     "shiki": "^3.4.2",
-    "vitest": "^3.1.2"
+    "vitest": "^3.1.2",
+    "wrangler": "^4.55.0"
   },
   "exports": {
     ".": "./dist/index.js",

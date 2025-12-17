@@ -23,7 +23,6 @@ import { render, signal } from 'cas-9';
 
 function Counter() {
   const [count, setCount] = signal(0);
-
   const increment = () => setCount(count() + 1);
 
   return <button onClick={increment}>{count}</button>;
