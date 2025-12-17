@@ -16,15 +16,6 @@
 
 CRISPR-Cas9 is the "molecular scissors" used to make selective edits to DNA. This library is the size of a molecule and makes selective updates to the DOM.
 
-## Get started with Vite
-
-```sh
-npx degit jrood/cas-9-starter my-app
-cd my-app
-npm i
-npm run dev
-```
-
 ## Example counter
 
 ```tsx
@@ -32,10 +23,20 @@ import { render, signal } from 'cas-9';
 
 function Counter() {
   const [count, setCount] = signal(0);
+
   const increment = () => setCount(count() + 1);
 
   return <button onClick={increment}>{count}</button>;
 }
 
 render(Counter, document.body);
+```
+
+## Get started with Vite
+
+```sh
+npx degit jrood/cas-9-starter my-app
+cd my-app
+npm i
+npm run dev
 ```

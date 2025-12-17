@@ -36,6 +36,7 @@ h2 {
   margin-bottom: 0.5rem;
 }
 pre {
+  font-family: ui-monospace, monospace;
   font-size: 14px;
   padding: 1.5rem;
   border-radius: 0.5rem;
