@@ -62,6 +62,7 @@ function Counter() {
 
 render(Counter, document.body);
 ```
+<div id="preview"></div>
 
 ## Get started with Vite
 

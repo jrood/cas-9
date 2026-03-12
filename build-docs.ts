@@ -81,6 +81,15 @@ const page = `<!DOCTYPE html>
     <meta charset=UTF-8>
     <meta name=viewport content="width=device-width,initial-scale=1">
     <style>${css.code}</style>
+    <script type="importmap">
+      {
+        "imports": {
+          "cas-9": "https://esm.sh/cas-9@0.0.33",
+          "cas-9/jsx-runtime": "https://esm.sh/cas-9@0.0.33/jsx-runtime"
+        }
+      }
+    </script>
+    <script type="module" src="https://esm.sh/tsx"></script>
   </head>
   <body>
     <main>
@@ -88,6 +97,29 @@ const page = `<!DOCTYPE html>
         <a href="https://github.com/jrood/cas-9">github.com/jrood/cas-9</a>
       </div>
       ${htmlContent.replace('<img src="./logo.svg">', logo)}
+      <script type="text/babel">
+        /* @jsx react-jsx */
+        /* @jsxImportSource cas-9 */
+        import { render, signal } from 'cas-9';
+
+        function Counter() {
+          // This function only runs once.
+          const count = signal(0);
+          const increment = () => count(count() + 1);
+
+          return (
+            <>
+              <button onClick={increment}>Increment</button>
+              <p>Double count: {
+                // Only this re-runs on update.
+                () => count() * 2
+              }</p>
+            </>
+          );
+        }
+
+        render(Counter, window.preview);
+      </script>
     </main>
   </body>
 </html>`;
