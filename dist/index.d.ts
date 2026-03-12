@@ -9,6 +9,7 @@ type Component = (props: Props) => any;
 export function jsx(t: Tag, p: Props): any;
 export function Fragment(p: Props): any;
 export function render(content: any, container: HTMLElement): void;
-export function signal<T>(value: T): [() => T, (newValue: T) => void];
+export function signal<T>(initialValue: T): { (): T; (value: T): void };
 export function effect(fn: () => void): void;
 export function untrack<T>(fn: () => T): T;
+export function batch<T>(fn: () => T): T;

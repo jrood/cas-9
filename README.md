@@ -11,7 +11,7 @@ Cas-9 is a minimalist take on [SolidJS](https://docs.solidjs.com/), charactized 
 - [Signal](https://github.com/tc39/proposal-signals)-powered state management
 - No VDOM
 - Zero dependencies
-- 692 bytes gzipped
+- Under 2 KB gzipped
 
 ## Why the name?
 
@@ -23,13 +23,13 @@ CRISPR-Cas9 is the "molecular scissors" used to make selective edits to DNA. Thi
 [Signals](https://github.com/tc39/proposal-signals) are a tool for managing stateful values, where "effect" functions that rely on those values are automatically tracked.
 
 ```tsx
-const [value, setValue] = signal('a');
+const value = signal('a');
 
 effect(() => {
   console.log(value());
 });
 
-setValue('b');
+value('b');
 
 // Both 'a' and 'b' are logged.
 ```
@@ -39,15 +39,15 @@ setValue('b');
 Like React, components are defined with functions that return JSX. Unlike React, changes to state in Cas-9 do not cause whole components to re-run. Rather,
 only small functions within JSX are re-rendered as effects of the signals used. This negates the need for a virtual dom.
 
-## Counter example
+## Example counter
 
 ```tsx
 import { render, signal } from 'cas-9';
 
 function Counter() {
   // This function only runs once.
-  const [count, setCount] = signal(0);
-  const increment = () => setCount(count() + 1);
+  const count = signal(0);
+  const increment = () => count(count() + 1);
 
   return (
     <>
