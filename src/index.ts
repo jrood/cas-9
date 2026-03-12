@@ -550,10 +550,6 @@ function signalOper<T>(this: SignalNode<T>, ...value: [T]): T | void {
   }
 }
 
-function effectOper(this: EffectNode): void {
-  effectScopeOper.call(this);
-}
-
 function effectScopeOper(this: ReactiveNode): void {
   this.depsTail = undefined;
   this.flags = None;
